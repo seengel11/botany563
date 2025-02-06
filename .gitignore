@@ -138,7 +138,6 @@ Backup[ ]of[ ]*.numbers/
 *.fna
 *.faa
 *.fasta
-*.fa
 *.dat
 *.paml
 
