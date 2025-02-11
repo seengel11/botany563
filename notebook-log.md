@@ -6,7 +6,7 @@
 
 Pheuticus is a genus of New World song birds also known as cardinals. Theses bird species are found across north, central, and south america. They are characterized by their complex songs, strong and large bills, and bright pigmentations. My data set contains information 22 Pheucticus samples and a single outgroup taxon. Sequenced are 9 loci (See table).
 
-!(/Users/saraengel/Desktop/locus_table.png)
+![](/Users/saraengel/Desktop/locus_table.png)
 
 Data was taken from Pulgarin et. al:
 https://www.sciencedirect.com/science/article/pii/S1055790313002297
