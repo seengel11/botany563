@@ -63,6 +63,8 @@ User Choices
 
 ## 3/1/25
 - Created guide trees using distance and parsimony methods of A40-aligned.fasta
+- Trees created in a .Rmd document located in /Users/saraengel/Desktop/botany563/scripts labeld Trees.Rmd
+
 ## Distance and Parsimony
 ### R Packages:
 ```{r}
@@ -126,7 +128,7 @@ Assumptions
 - Equal Weighting of Changes: Parsimony assumes that all character changes are equally probable. Some variants of the method allow for differential weighting of transitions, transversions, or indels, but standard parsimony assigns equal weights.
 - Minimal Evolution: Parsimony assumes that the simplest tree (requiring the fewest changes) is the most likely explanation for the observed data, without considering varying rates of evolution across lineages.
 
-### R Script
+#### R Script
 
 ```{r}
 dna <- fasta2DNAbin(file="~/Desktop/botany563/data/clustalw output/A40-aligned.fasta")
@@ -137,6 +139,69 @@ tre.pars <- optim.parsimony(tre.ini, dna2)
 
 plot(tre.pars, cex=0.6)
 ```
+
+## 3/19/25
+- Used IQ-tree to make maximum likelihood tree of A40 gene. 
+
+### Maximum Likelihood
+
+IQ Tree
+Software Description:	
+IQ-TREE is a fast and efficient software for inferring phylogenetic trees using maximum likelihood (ML) methods. It incorporates model selection, ultrafast bootstrapping, and other advanced features to ensure accurate and robust tree estimation. It's widely used in molecular phylogenetics, especially for large datasets.
+
+Strengths	
+- Fast and scalable: Optimized for large datasets with high performance.
+- Ultrafast bootstrap: Provides rapid, accurate bootstrap support values (UFBoot2).
+- Automated model selection: Automatically selects the best-fit substitution model.
+- Bayesian-like branch supports: SH-like approximate likelihood ratio test (SH-aLRT) for branch support.
+- Wide range of models: Supports nucleotide, amino acid, and codon models for sequence evolution.
+
+Weaknesses
+- ML focus: IQ-TREE is focused on maximum likelihood methods and may not be the best choice if you're looking for Bayesian methods or non-parametric techniques.
+- Complexity: Advanced features require familiarity with phylogenetic methods, making it harder for beginners.
+- Assumes independence: As with most phylogenetic models, it assumes independence between sites, which may not hold for all datasets.
+
+Assumptions	
+- Evolutionary model assumptions: Assumes a substitution model for sequence evolution (e.g., GTR, HKY85, etc.), which may not always perfectly fit the data.
+- Independence of sites: Assumes that nucleotide or amino acid sites evolve independently.
+- Tree-like evolution: Assumes the data can be represented by a bifurcating tree.
+- Stationarity: Assumes that the substitution process is stationary (i.e., unchanged across the tree).
+
+User Choices	
+- Substitution model: Users can specify a substitution model or allow IQ-TREE to select the best model.
+- Bootstrap methods: Choose between ultrafast bootstrap or other support estimation methods.
+- Partitioning schemes: Ability to partition data and apply different models to different parts of the dataset.
+- Branch support metrics: Option to use SH-aLRT, ultrafast bootstrap, or other branch support values.
+- Gene-wise partitioning: Can handle gene partitions or whole-genome alignments with model selection for each partition.
+
+
+#### Script
+
+##### Terminal for ML
+ 
+```
+cd Desktop/iqtree-1.6.12-MacOSX
+bin\iqtree -s /Users/saraengel/Desktop/botany563/data/clustalw output/A40_seq.dnd
+
+```
+File outputs where placed in the following path: /Users/saraengel/Desktop/botany563/data/Maximum Likelihood Output/A40, ML
+ 
+##### R For plotting
+Rooted tree at the outgroup(Granatellus venusta, GR JK04-078) as stated by the original paper (Pulgarin et al.)
+Text was copied from A40-aligned.fasta.iqtree file from IQ-tree output
+```{r}
+
+tree <- read.tree(text="(Pms_BRB1162a:0.0000020199,Pmw_DHB5399a:0.0000028651,((Pme_dhb4768b:0.0024695124,((((((Pc_116284a:0.0000022538,Pc_116283a:0.0000020689):0.0019400077,(Pac_TA22a:0.0000020646,Pac_TA22b:0.0000025308):0.0000020207):0.0000020423,((Pa_B8248a:0.0000028651,Pa_B8248b:0.0000020667):0.0000020443,Pc_B5186b:0.0019399415):0.0019399892):0.0040621032,(((Py_BTS08324a:0.0000020249,Py_BTS08324b:0.0000020292):0.0019393181,Ps_SIN152b:0.0000025567):0.0019396388,((Ps_SIN152a:0.0000020423,Py_BTS08305a:0.0000022396):0.0000020596,(Py_BTS08305b:0.0039327275,(Pmw_DHB5399b:0.0000024018,Pme_JK09429b:0.0000020575):0.0039376824):0.0000022921):0.0000020247):0.0040694295):0.0019357374,(Gr_JK04078a:0.0000024023,Gr_JK04078b:0.0019393843):0.0129577583):0.0000020075,(((((Pl_DHB5709a:0.0000028651,Pl_DHB5709b:0.0000028651):0.0000029230,Pl_TKA28b:0.0000028651):0.0000022724,Pl_TKA28a:0.0000028651):0.0000021622,Pl_DHB5227a:0.0000020429):0.0019695850,((Pt_B16050a:0.0000020966,Pt_B16050b:0.0000021003):0.0041204754,Pl_DHB5227b:0.0019617880):0.0020001200):0.0019739723):0.0019814287):0.0000029503,((Pms_BRB1162b:0.0019757602,Pme_JK09429a:0.0019733915):0.0017116462,Pme_dhb4768a:0.0082756970):0.0065230974):0.0000020831);")
+
+
+plot(tree)
+nodelabels()
+
+rooted_tree = root(tree, node = 51, resolve.root = TRUE)
+plot(rooted_tree)
+```
+
+
 ## Citation:
 
 Pulgarín-R, P. C., Smith, B. T., Bryson, R. W., Spellman, G. M., & Klicka, J. (2013). Multilocus phylogeny and biogeography of the New World Pheucticus grosbeaks (Aves: Cardinalidae). Molecular Phylogenetics and Evolution, 69(3), 1222-1227. https://doi.org/10.1016/j.ympev.2013.05.022
