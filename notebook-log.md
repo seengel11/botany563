@@ -54,18 +54,80 @@ User Choices
 
 #### Terminal Commands: 
 `cd saraengel/Desktop/botany563/data/Prealignment data`
-`clustalw -ALIGN -INFILE='locus'_seq.fasta -OUTFILE='locus'-aligned.fasta -OUTPUT=FASTA`
+`clustalw -ALIGN -INFILE='locus'_seq.fasta -OUTFILE='locus'-aligned.fasta -OUTPUT=FASTA -GAPOPEN=n -GAPEXT=m`
+`clustalw -ALIGN -INFILE='locus'_seq.fasta -OUTFILE='locus'-aligned.nexus -OUTPUT=NEXUS -GAPOPEN=n -GAPEXT=m`
 
 #### File Location
+
+FASTA files
 - Output files located through following path: botany563/data/clustalw output
 - Each locus alignment has to output files: 'locus'-aligned.fasta & 'locus'_seq.dnd
 
+Nexus Files
+- Output file location: /Users/saraengel/Desktop/botany563/data/alignments_nexus
+- 'locus'_seq.dnd file was placed in trash
+- File titles: 'locus'-aligned.nexus
 
-## 3/1/25
+### MUSCLE
+
+#### Description
+Software: 
+MUSCLE (Multiple Sequence Comparison by Log-Expectation)
+
+Description	
+- MUSCLE is a widely-used command-line tool for multiple sequence alignment (MSA) of nucleotide or protein sequences.
+- It focuses on high accuracy and speed, and is suitable for aligning both small and large datasets. 
+- It supports progressive alignment, tree-based refinement, and iterative optimization.
+
+Strengths	
+- Fast and scalable (especially earlier versions)
+- Accurate alignments for many types of sequences
+- Widely supported in bioinformatics pipelines and GUI tools (e.g., MEGA, Geneious)
+- No need for manual parameter tuning in most cases
+- Available in multiple formats (FASTA, CLUSTAL, etc.)
+
+Weaknesses	
+- No alignment score output by default (limits comparative evaluation)
+- Limited gap penalty customization (especially in MUSCLE v5)
+- Less effective than newer tools (e.g., MAFFT, T-Coffee) for very large or complex datasets
+- Fewer options for RNA structural alignment or profile-based MSA
+
+Assumptions	
+- Input sequences are homologous and alignable
+- Uses progressive alignment with initial pairwise k-mer similarity followed by refinement
+- Assumes sequence similarity correlates with evolutionary closeness
+- Optimizations assume typical biological mutation patterns (e.g., indels less frequent than substitutions)
+
+User Choices	
+- Input/output file formats (FASTA, CLUSTAL)
+- Version choice: v3 (classic) vs v5 (improved modeling, no gap penalty tuning)
+- Choice to use refinement iterations (e.g., -maxiters)
+- Optional tree output (-tree1, -tree2)
+- Gap penalties (limited customization in v3, none in v5)
+- Optional log file for tracing the run
+
+#### Terminal Commands with Notes
+`cd saraengel/Desktop/botany563/data/Prealignment data`
+
+Verify alignment efficacy:
+`muscle -align 'locus'_seq.fasta -stratified  -output 'locus'_aligned_muscle_test.fasta` # Runs 16 replicates with same constraints
+`muscle -disperse 'locus'_aligned_muscle_test.fasta` # if dispersion = 0 -> alignment is robust (Quite likely, it has no errors), if large dispersion (>.5) ->there is significant variation between the alignments
+
+Construct single alignment: 
+- Only if dispersion =0 or <.5
+`muscle -align 'locus'_seq.fasta  -output 'locus'_aligned_muscle.fasta`
+
+#### File Location
+- Output files located through following path: botany563/data/muscle output
+- Each locus alignment has to output files: 'locus'_aligned_muscle.fasta and 'locus'_aligned_muscle_test.fasta`
+
+
+## 2025-03-01
 - Created guide trees using distance and parsimony methods of A40-aligned.fasta
 - Trees created in a .Rmd document located in /Users/saraengel/Desktop/botany563/scripts labeld Trees.Rmd
 
 ## Distance and Parsimony
+
 ### R Packages:
 ```{r}
 library(ape)
@@ -96,7 +158,7 @@ Assumptions:
 - Distance Measure: The accuracy of the NJ tree heavily depends on the assumption that the genetic distance measure used (e.g., Jukes-Cantor, Kimura, etc.) accurately reflects evolutionary relationships. 
 - Additivity: The method assumes that evolutionary distances are additive, which may not always be valid, particularly in cases with horizontal gene transfer or varying rates of evolution across lineages.
 
-####R Script
+#### R Script
 ```{r}
 dna <- fasta2DNAbin(file="~/Desktop/botany563/data/clustalw output/A40-aligned.fasta")
 D <- dist.dna(dna, model="TN93")
@@ -140,10 +202,10 @@ tre.pars <- optim.parsimony(tre.ini, dna2)
 plot(tre.pars, cex=0.6)
 ```
 
-## 3/19/25
+## 2025-03-19
 - Used IQ-tree to make maximum likelihood tree of A40 gene. 
 
-### Maximum Likelihood
+## Maximum Likelihood
 
 IQ Tree
 Software Description:	
@@ -175,9 +237,9 @@ User Choices
 - Gene-wise partitioning: Can handle gene partitions or whole-genome alignments with model selection for each partition.
 
 
-#### Script
+### Script
 
-##### Terminal for ML
+#### Terminal for ML
  
 ```
 cd Desktop/iqtree-1.6.12-MacOSX
@@ -186,7 +248,8 @@ bin\iqtree -s /Users/saraengel/Desktop/botany563/data/clustalw output/A40_seq.dn
 ```
 File outputs where placed in the following path: /Users/saraengel/Desktop/botany563/data/Maximum Likelihood Output/A40, ML
  
-##### R For plotting
+#### R For plotting
+
 Rooted tree at the outgroup(Granatellus venusta, GR JK04-078) as stated by the original paper (Pulgarin et al.)
 Text was copied from A40-aligned.fasta.iqtree file from IQ-tree output
 ```{r}
@@ -200,8 +263,85 @@ nodelabels()
 rooted_tree = root(tree, node = 51, resolve.root = TRUE)
 plot(rooted_tree)
 ```
+## 2025-04-03
 
+- Narrowed down 10 genes for analysis to 2 genes, to simplify project methods. Genes chosen where the two mitochondiral genes used from the original paper: NADH dehydrogenase subunit 2 (ND2) and ATPase8/6 (ATP)
+- Conducted MSA of data (see MSA section 'clustalw')
+  - ATP: Alignment Score: 1547871, with gapopen=5 and gapext=2
+  - ND2: Alignment Score: 1914465, with gapopen=5 and gapext=2
 
+## 2025-04-06
+
+- Conducted MSA of data using muscle (see MSA section 'muscle'):
+  - ATP: Dispersion = 00.00 Gap open penalty: -400, Gap extension penalty: 0
+  - ND2: Dispersion = 00.01, Gap open penalty: -400, Gap extension penalty: 0
+
+## 2025-04-07
+- Conducted clustalw again with same parameters as 2025-04-03 but output a nexus file (lcoation and file names under MSA: clustalw section)
+- Conducted Mrbayes on clustalw aligned data:
+  - Created mrbayes block in text editor. Contained the following:
+
+begin mrbayes;
+ set autoclose=yes;
+ prset brlenspr=unconstrained:exp(10.0);
+ prset shapepr=exp(1.0);
+ prset tratiopr=beta(1.0,1.0);
+ prset statefreqpr=dirichlet(1.0,1.0,1.0,1.0);
+ lset nst=6 rates=gamma ;
+ mcmcp ngen=250000000 samplefreq=7500 printfreq=7500 diagnfreq=15000 burninfrac=0.25 nchains=4 nruns=2 savebrlens=yes;
+ outgroup Gr_JK04078;
+ mcmc;
+ sumt;
+end;
+  
+  - Set ngen=750000000 and lset nst = 6 and rates = gamma based off Pulgarín-R et all., 2013
+
+## Bayesian inference
+
+### MrBayes
+
+#### Descritpion
+
+Description
+- MrBayes is a command-line program for Bayesian inference of phylogeny. 
+- It uses Markov chain Monte Carlo (MCMC) methods to estimate the posterior probabilities of trees given a multiple sequence alignment and an evolutionary model.
+- MrBayes allows flexible model specification and returns a sample of trees from the posterior distribution, which can be used to infer evolutionary relationships with statistical support.
+
+Strengths
+- Provides posterior probability support values, which are often more interpretable than bootstrap values
+- Allows for complex model selection, including mixed models across partitions
+- Highly customizable (nucleotide, amino acid, morphological data)
+- Can estimate parameters such as rate variation, base frequencies, and tree topology simultaneously
+- Output includes trees, parameter distributions, and diagnostics
+
+Weaknesses
+- Computationally intensive, especially on large data sets
+- Requires careful parameter setting to ensure convergence
+- Interpretation of posterior probabilities can be misleading if priors or models are poorly chosen
+- Burn-in and convergence diagnostics must be assessed manually or with external tools
+- Less user-friendly for beginners (command-line interface, detailed input syntax)
+
+Assumptions
+- Assumes input alignment is accurate and homologous
+- Assumes the specified substitution model reflects the evolutionary process
+- Bayesian framework assumes prior distributions on model parameters
+- Assumes independent and identically distributed sites (unless partitioned)
+- Assumes the Markov chain reaches a stationary distribution (convergence)
+
+User Choices	
+- Choice of substitution model (e.g., GTR, HKY85, WAG)
+- Partitioning of dataset by gene, codon position, etc.
+- MCMC parameters: number of generations, chains, temperature, burn-in, sampling frequency
+- Model priors (e.g., for rate variation, tree shape)
+- Output preferences: consensus tree type, diagnostics, trace files
+
+#### Terminal Commands
+` cd Desktop/botany563/data/alignments_nexus`
+` cat 'locus'-aligned.nexus mbblock_'locus'.txt > 'locus'-'alignment type'-mb.nex` # locus is either atp or ND2; alignment is either clustal or muscle
+` mb -i 'locus'-'alignment type'-mb.nex`
+
+#### File Location:
+- All output files located: Desktop/botany563/data/MrBayes Output
 ## Citation:
 
 Pulgarín-R, P. C., Smith, B. T., Bryson, R. W., Spellman, G. M., & Klicka, J. (2013). Multilocus phylogeny and biogeography of the New World Pheucticus grosbeaks (Aves: Cardinalidae). Molecular Phylogenetics and Evolution, 69(3), 1222-1227. https://doi.org/10.1016/j.ympev.2013.05.022

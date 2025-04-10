@@ -16,7 +16,7 @@ library(phangorn)
 ```
 
 ```{r}
-dna <- fasta2DNAbin(file="~/Desktop/botany563/data/clustalw output/A40-aligned.fasta")
+dna <- fasta2DNAbin(file="~/Desktop/botany563/data/Prealignment data/ATP_seq.fasta")
 D <- dist.dna(dna, model="TN93")
 tre <- nj(D)
 tre <- ladderize(tre)
