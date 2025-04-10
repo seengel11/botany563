@@ -1,0 +1,13 @@
+
+begin mrbayes;
+ set autoclose=yes;
+ prset brlenspr=unconstrained:exp(10.0);
+ prset shapepr=exp(1.0);
+ prset tratiopr=beta(1.0,1.0);
+ prset statefreqpr=dirichlet(1.0,1.0,1.0,1.0);
+ lset nst=6 rates=gamma ;
+ mcmcp ngen=250000000 samplefreq=7500 printfreq=7500 diagnfreq=15000 burninfrac=0.25 nchains=4 nruns=2 savebrlens=yes;
+ outgroup Gr_JK04078;
+ mcmc;
+ sumt;
+end;
